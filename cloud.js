@@ -263,6 +263,78 @@
       .subscribe();
   }
 
+
+  /* ---------- photos restées dans le dossier local (ex. points corrigés) ---------- */
+  function photoManquante(ph) {
+    var src = String((ph && ph.src) || "");
+    return ph && !/^(data:|https?:|blob:)/i.test(src) && (src || ph.fichier);
+  }
+  function parcourirPhotos(obj, fn) {
+    if (!obj || typeof obj !== "object") return;
+    if (Array.isArray(obj)) { obj.forEach(function (x) { parcourirPhotos(x, fn); }); return; }
+    if (Array.isArray(obj.photos)) obj.photos.forEach(function (ph) { fn(ph); });
+    Object.keys(obj).forEach(function (k) { if (k !== "photos" && obj[k] && typeof obj[k] === "object") parcourirPhotos(obj[k], fn); });
+  }
+  function nomFichierPhoto(ph) {
+    var f = String(ph.fichier || ph.src || "").replace(/^pj:/, "");
+    try { f = decodeURIComponent(f); } catch (e) {}
+    return f.split("/").pop().toLowerCase();
+  }
+  function photosManquantes() {
+    var liste = [];
+    Object.keys(dernier).forEach(function (id) {
+      if (monRole[id] === "lecteur") return;
+      parcourirPhotos(JSON.parse(dernier[id]), function (ph) { if (photoManquante(ph)) liste.push({ idee: id, nom: nomFichierPhoto(ph) }); });
+    });
+    return liste;
+  }
+  function lireDataUrl(f) {
+    return new Promise(function (ok, ko) { var r = new FileReader(); r.onload = function () { ok(String(r.result)); }; r.onerror = function () { ko(r.error); }; r.readAsDataURL(f); });
+  }
+  function boutonPhotos() {
+    var manq = photosManquantes();
+    var ancien = document.getElementById("jhc-photos");
+    if (ancien) ancien.remove();
+    if (!manq.length) return;
+    var choix = el("input", { type: "file", multiple: "multiple", style: "display:none" });
+    choix.setAttribute("webkitdirectory", "");
+    var btn = el("button", { id: "jhc-photos", "class": "jhc-btn", style: "background:#d97706",
+      title: "Ces photos sont encore seulement dans ton dossier SharePoint. Choisis le dossier « Sources » (ou 00-Idées) pour les mettre en ligne.",
+      texte: "📷 " + manq.length + " photo" + (manq.length > 1 ? "s" : "") + " à mettre en ligne", onclick: function () { choix.click(); } });
+    choix.addEventListener("change", function () {
+      var parNom = {};
+      Array.prototype.forEach.call(choix.files || [], function (f) { parNom[f.name.toLowerCase()] = f; });
+      var besoin = {};
+      manq.forEach(function (m) { if (parNom[m.nom]) besoin[m.nom] = parNom[m.nom]; });
+      var noms = Object.keys(besoin);
+      if (!noms.length) { etat("⚠ Aucune des photos manquantes dans ce dossier. Choisis le dossier Sources.", true); return; }
+      etat("📷 Lecture de " + noms.length + " photo(s)…");
+      var urls = {};
+      Promise.all(noms.map(function (n) { return lireDataUrl(besoin[n]).then(function (u) { urls[n] = u; }); })).then(function () {
+        var faites = 0;
+        appliquer(function (d) {
+          var copie = JSON.parse(JSON.stringify(d));
+          copie.idees.forEach(function (idee) {
+            parcourirPhotos(idee, function (ph) {
+              if (!photoManquante(ph)) return;
+              var u = urls[nomFichierPhoto(ph)];
+              if (u) { ph.src = u; faites++; }
+            });
+          });
+          return copie;
+        });
+        setTimeout(function () {
+          etat("📷 " + faites + " photo(s) mises en ligne");
+          var reste = manq.length - noms.length;
+          setTimeout(boutonPhotos, 4000);
+          if (reste > 0) console.warn(reste + " photo(s) introuvables dans le dossier choisi");
+        }, 300);
+      }).catch(function (e) { etat("⚠ " + (e.message || e), true); });
+    });
+    document.getElementById("jhc-barre").insertBefore(btn, document.getElementById("jhc-barre").firstChild);
+    document.body.appendChild(choix);
+  }
+
   /* ---------- barre et panneau de partage ---------- */
   var panneau = null, panneauOuvert = false, selection = null, filtre = "";
   function barre() {
@@ -272,6 +344,7 @@
       el("button", { "class": "jhc-btn", texte: "👥 Partager", onclick: basculerPanneau })
     ]);
     document.body.appendChild(b);
+    setTimeout(boutonPhotos, 1500);
   }
   function basculerPanneau() {
     panneauOuvert = !panneauOuvert;

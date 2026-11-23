@@ -38,7 +38,7 @@ s=s[:a]+'<script type="text/plain" id="jh-app-module">'+mod+s[b:]
 # 3. retirer le script des photos locales (chemin du poste)
 s=re.sub(r'<script id="jh7-photos">[\s\S]*?</script>','',s)
 # 4. connexion
-head='<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script><script src="cloud.js?v=2"></script>'
+head='<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script><script src="cloud.js?v=3"></script>'
 s=s.replace('</head>',head+'</head>',1)
 s=s.replace('<title>','<title>',1)
 open(dst,'w',encoding='utf-8').write(s)
