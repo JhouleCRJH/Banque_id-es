@@ -83,7 +83,7 @@
       inp.addEventListener("keydown", function (e) { if (e.key === "Enter") envoyer(); });
       [el("h1", { texte: "Banque d'idées" }),
        el("p", { texte: "Entrez votre courriel. Vous recevrez un lien de connexion (ou un code). Aucun mot de passe à retenir." }),
-       inp, err, btn].forEach(function (c) { boite.appendChild(c); });
+       inp, err, btn].forEach(function (c) { boite.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
       setTimeout(function () { inp.focus(); }, 50);
     }
     function etape2() {
@@ -105,7 +105,7 @@
       [el("h1", { texte: "Vérifiez vos courriels" }),
        el("p", { texte: "Un courriel a été envoyé à " + courriel + ". Cliquez sur le lien qu'il contient, ou entrez ici le code s'il y en a un." }),
        inp, err, btn, " ",
-       el("button", { "class": "jhc-btn sec", texte: "Changer d'adresse", onclick: etape1 })].forEach(function (c) { boite.appendChild(c); });
+       el("button", { "class": "jhc-btn sec", texte: "Changer d'adresse", onclick: etape1 })].forEach(function (c) { boite.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
       setTimeout(function () { inp.focus(); }, 50);
     }
     etape1();
@@ -392,7 +392,7 @@
     });
     [inp, role, err, btn,
      el("p", { style: "font-size:12px;color:#64748b;margin-top:10px", texte: "Le bouton ouvre un courriel prêt à envoyer dans votre messagerie. L'accès est actif dès maintenant, même si vous n'envoyez pas le courriel." })
-    ].forEach(function (c) { panneau.appendChild(c); });
+    ].forEach(function (c) { panneau.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
   }
 
   /* ---------- import initial de la banque (propriétaire, une seule fois) ---------- */
@@ -419,7 +419,7 @@
         var lignes = doc.idees.filter(function (i) { return i && i.id && !supp[i.id]; })
           .map(function (i) { return { id: i.id, numero: i.numero || null, donnees: i }; });
         var paquets = [];
-        for (var k = 0; k < lignes.length; k += 8) paquets.push(lignes.slice(k, k + 8));
+        for (var k = 0; k < lignes.length; k += 3) paquets.push(lignes.slice(k, k + 3));
         var fait = 0;
         return paquets.reduce(function (p, paq) {
           return p.then(function () {
@@ -437,7 +437,7 @@
      el("p", { texte: "Votre banque en ligne est vide. Choisissez votre fichier actuel (Idees_Logiciels_Skills_Agents.html) pour y copier toutes vos idées et leurs photos. Votre fichier n'est pas modifié." }),
      fichier, err, btn, " ",
      el("button", { "class": "jhc-btn sec", texte: "Commencer vide", onclick: function () { suite(); } })
-    ].forEach(function (c) { boite.appendChild(c); });
+    ].forEach(function (c) { boite.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
   }
 
   /* ---------- démarrage ---------- */
