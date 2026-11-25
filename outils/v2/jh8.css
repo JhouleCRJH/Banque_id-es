@@ -1,0 +1,157 @@
+/* JH v8 : fiche 2026-11-25 */
+.jh8-sec{background:#ffffff8c;border:1px solid #ffffffe6;border-radius:18px;padding:12px 14px;box-shadow:0 2px 10px #1a3a5c0d}
+.jh8-sec.jh8-ferme{padding-top:8px;padding-bottom:8px}
+.jh8-entete{cursor:pointer;user-select:none;border-radius:12px;margin:-4px -6px;padding:4px 6px;min-height:40px}
+.jh8-entete:hover{background:#1a3a5c0a}
+.jh8-entete:focus-visible{outline:3px solid #52a43180;outline-offset:2px}
+.jh8-entete-d{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.jh8-chev{display:inline-flex;width:20px;height:20px;color:#1a3a5c;transition:transform .18s}
+.jh8-chev svg{width:20px;height:20px}
+.jh8-ferme .jh8-chev{transform:rotate(-90deg)}
+@media(prefers-reduced-motion:reduce){.jh8-chev{transition:none}}
+.jh8-sec:has(.jh8-alerte),.jh8-sec:has(.jh8-compte-tard){border-color:#c0392b;box-shadow:0 0 0 1px #c0392b}
+.jh8-outils{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.jh8-btn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:6px 14px;border-radius:9999px;border:1px solid #1a3a5c24;background:#fff;color:#1a3a5c;font-size:13px;font-weight:600;cursor:pointer}
+.jh8-btn:hover{background:#f0f6ff}
+.jh8-btn svg{width:16px;height:16px}
+.jh8-btn.jh8-plein{background:#1a3a5c;color:#fff;border-color:#1a3a5c}
+.jh8-btn.jh8-plein:hover{background:#244b73}
+.jh8-btn.jh8-rouge{color:#c0392b;border-color:#c0392b55}
+.jh8-btn.jh8-rouge:hover{background:#fdecea}
+.jh8-sous{font-size:13px;color:#4b5868;margin:0}
+/* bandeau */
+.jh8-teinte{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,color-mix(in srgb,var(--c) 75%,transparent));pointer-events:none}
+.jh8-logo{position:absolute;left:12px;bottom:10px;z-index:2;background:#fff;border-radius:10px;padding:4px;box-shadow:0 4px 12px #0003;display:grid;place-items:center;height:42px;max-width:40%}
+.jh8-logo img{height:34px;width:auto;max-width:100%;object-fit:contain}
+.jh8-logo.jh8-logo-g{left:22px;top:50%;bottom:auto;transform:translateY(-50%);height:96px;padding:10px;border-radius:16px}
+.jh8-logo.jh8-logo-g img{height:76px}
+.jh8-ruban{position:absolute;right:0;top:44px;z-index:2;background:#c0392b;color:#fff;font:700 12px Montserrat,Arial,sans-serif;padding:5px 12px 5px 14px;border-radius:9999px 0 0 9999px;box-shadow:0 4px 12px #0004}
+.jh8-ban-g .jh8-ruban{top:14px}
+.jh8-modif{position:absolute;right:14px;bottom:12px;z-index:2;background:#fff;color:#1a3a5c;font-size:12.5px;font-weight:700;border-radius:9999px;padding:7px 13px;box-shadow:0 4px 14px #0003;display:flex;gap:6px;align-items:center}
+.jh8-modif svg{width:15px;height:15px}
+.jh8-ban-g:hover .jh8-modif{background:#f0f6ff}
+.jh8-ban-g:focus-visible{outline:3px solid #52a43180;outline-offset:-3px}
+.jh8-cache{display:none}
+.carte:has(.jh8-retard){box-shadow:0 0 0 2px #c0392b,0 8px 32px #c0392b33}
+/* fenêtres */
+.jh8-voile{position:fixed;inset:0;background:#0b1a2b88;display:flex;align-items:center;justify-content:center;z-index:2147482000;padding:16px;pointer-events:auto}
+.jh8-modal{background:#fff;border-radius:20px;max-width:760px;width:100%;max-height:100%;overflow:auto;padding:20px;box-shadow:0 20px 60px #0005;color:#1f2a37;font-size:14px}
+.jh8-modal.jh8-large{max-width:1100px}
+.jh8-modal h2{margin:0 0 4px;color:#1a3a5c;font:700 19px Montserrat,Arial,sans-serif}
+.jh8-choix{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:12px}
+.jh8-choix button{border:3px solid transparent;border-radius:12px;padding:0;overflow:hidden;background:#eef2f7;height:90px;position:relative;cursor:pointer}
+.jh8-choix button.on{border-color:#52a431}
+.jh8-choix button img{width:100%;height:100%;object-fit:cover}
+.jh8-choix button span{position:absolute;left:6px;bottom:6px;right:6px;background:#fffe;border-radius:6px;font-size:11px;padding:1px 6px;color:#1a3a5c;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.jh8-themes{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.jh8-themes button{width:40px;height:40px;border-radius:12px;border:3px solid #fff;box-shadow:0 0 0 1px #1a3a5c1f;cursor:pointer}
+.jh8-themes button.on{box-shadow:0 0 0 3px #52a431}
+.jh8-themes .jh8-th-auto{width:auto;padding:0 12px;background:#fff;color:#1a3a5c;font-size:13px;font-weight:600}
+.jh8-perso{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#1a3a5c;border:1px dashed #1a3a5c55;border-radius:12px;padding:0 10px 0 4px;height:40px;cursor:pointer}
+.jh8-perso input{width:32px;height:32px;border:0;padding:0;background:none;cursor:pointer}
+.jh8-logoz{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.jh8-logo-ap{background:#fff;border:1px solid #1a3a5c1f;border-radius:12px;padding:6px;height:56px;display:grid;place-items:center}
+.jh8-logo-ap img{height:44px;width:auto}
+.jh8-pied{display:flex;gap:8px;justify-content:flex-end;align-items:center;margin-top:16px}
+/* photos par section */
+.jh8-photos{display:flex;gap:10px;overflow-x:auto;padding:6px 2px 4px;border-radius:14px}
+.jh8-photos[data-survol]{background:#52a43122;outline:2px dashed #52a431}
+.jh8-ph{flex:none;width:150px;margin:0}
+.jh8-ph-im{position:relative;width:150px;height:100px;border-radius:12px;overflow:hidden;border:1px solid #1a3a5c1f;padding:0;background:#eef2f7;display:block;cursor:pointer}
+.jh8-ph-im img{width:100%;height:100%;object-fit:cover}
+.jh8-ph-im:hover{box-shadow:0 0 0 3px #52a43166}
+.jh8-ph figcaption{font-size:11.5px;color:#4b5868;margin-top:4px;line-height:1.3}
+.jh8-ph figcaption b{display:block;color:#1a3a5c;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jh8-ph figcaption span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.jh8-annot{position:absolute;right:6px;top:6px;background:#e53935;color:#fff;font-style:normal;font-size:11px;border-radius:9999px;padding:1px 6px}
+.jh8-ajph{flex:none;width:150px;height:100px;border:2px dashed #1a3a5c33;border-radius:12px;background:#ffffff80;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center;font-size:12px;font-weight:600;color:#1a3a5c;padding:6px;cursor:pointer}
+.jh8-ajph:hover{background:#fff;border-color:#52a431}
+.jh8-ajph svg{width:20px;height:20px}
+.jh8-ajph small{font-weight:400;color:#64748b;font-size:11px}
+/* éditeur */
+.jh8-edhaut{display:flex;gap:10px;flex-wrap:wrap;align-items:end}
+.jh8-edhaut label{display:grid;gap:4px}
+.jh8-outilsD{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:12px 0 8px;padding:6px;background:#1a3a5c0d;border-radius:14px}
+.jh8-ot{min-width:54px;height:52px;padding:4px 6px;border-radius:10px;border:1px solid #1a3a5c1f;background:#fff;color:#1a3a5c;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer}
+.jh8-ot small{font-size:10.5px;font-weight:600;line-height:1}
+.jh8-ot.on{background:#1a3a5c;color:#fff}
+.jh8-oc{width:30px;height:30px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #0003;padding:0;cursor:pointer}
+.jh8-oc.on{box-shadow:0 0 0 3px #52a431}
+.jh8-sep{width:1px;height:28px;background:#1a3a5c1f;margin:0 4px}
+.jh8-epais{display:flex;align-items:center;gap:6px;font-size:12.5px;color:#4b5868}
+.jh8-epais input{width:90px}
+.jh8-edzone{position:relative;display:grid;place-items:center;background:#0b1a2b0d;border-radius:12px;padding:6px;min-height:240px}
+.jh8-edzone canvas{touch-action:none;cursor:crosshair;max-width:100%;border-radius:6px;box-shadow:0 2px 10px #0002}
+.jh8-edtxt{position:absolute;width:220px!important;min-width:0!important;padding:6px 8px!important;font-size:14px!important;box-shadow:0 4px 14px #0003;flex:none!important}
+/* échéance d'un point ou d'une tâche */
+.jh8-ech{display:inline-flex;align-items:center;gap:6px;font:500 11px/1.3 "Roboto Mono",Consolas,monospace;color:#64748b;margin-left:8px;flex-wrap:wrap}
+.jh8-ech input{font:500 11.5px "Roboto Mono",Consolas,monospace;border:1px dashed #94a3b8;border-radius:8px;padding:1px 6px;background:#ffffffb3;color:#1a3a5c;width:auto}
+.jh8-ech.jh8-tard{color:#c0392b;font-weight:700}
+.jh8-ech.jh8-tard input{border-color:#c0392b;color:#c0392b;background:#fdecea}
+.jh8-tardtxt{background:#c0392b;color:#fff;border-radius:9999px;padding:1px 7px;font:700 11px "Open Sans",Arial,sans-serif;white-space:nowrap}
+.jh8-ajtache .jh8-ech{margin:8px 0 0}
+.jh8-ajout-ech{display:flex;align-items:center;margin-top:4px}
+/* échéancier */
+.jh8-dates{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
+.jh8-dates label{display:grid;gap:4px}
+.jh8-frise{margin-top:16px;position:relative;height:14px;border-radius:9999px;background:#1a3a5c14}
+.jh8-frise i{position:absolute;inset:0 auto 0 0;border-radius:9999px;background:#52a431}
+.jh8-frise.jh8-tard i{background:#c0392b;width:100%!important}
+.jh8-frise b{position:absolute;top:-6px;width:3px;height:26px;background:#1a3a5c;border-radius:2px}
+.jh8-frise-l{display:flex;justify-content:space-between;font-size:12px;color:#4b5868;margin-top:6px;gap:8px}
+.jh8-etat{margin-top:12px;border-radius:12px;padding:10px 12px;font-weight:600;font-size:14px}
+.jh8-etat-ok{background:#52a4311a;color:#2f6e1a}
+.jh8-etat-tard{background:#c0392b;color:#fff}
+.jh8-compte-tard{background:#c0392b!important;color:#fff!important}
+.jh8-compte-marche{background:#52a4311f!important;color:#2f6e1a!important}
+/* forces / faiblesses */
+.jh8-deux{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.jh8-h4{margin:6px 0 6px;font:700 13.5px Montserrat,Arial,sans-serif;color:#1a3a5c}
+.jh8-vert{color:#2f6e1a}.jh8-rougeT{color:#c0392b}
+.jh8-txtbtn{display:inline;text-align:left;background:none;border:0;padding:0;cursor:pointer;color:inherit;font:inherit}
+.jh8-txtbtn:hover .jh2-texte{text-decoration:underline;text-decoration-color:#52a431}
+.jh8-itemnote[data-coche="1"] .jh2-texte{text-decoration:line-through;color:#8a95a3}
+.jh8-noteind{font-size:11px;color:#1a3a5c;background:#1a3a5c12;border-radius:9999px;padding:1px 8px;margin-left:6px;white-space:nowrap}
+.jh8-notebox{display:grid;gap:6px;margin-top:8px}
+.jh8-notebox .champ{font-size:14px;padding:.45rem .7rem}
+/* horodateur */
+.jh8-horo{display:flex;flex-direction:column;gap:6px}
+.jh8-chrono{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;align-items:end}
+.jh8-chrono label{display:grid;gap:4px}
+.jh8-cadran{display:flex;align-items:center;gap:14px;margin-top:8px;flex-wrap:wrap;background:#1a3a5c0a;border-radius:14px;padding:12px 14px}
+.jh8-cadran .jh8-t{font:600 28px "Roboto Mono",Consolas,monospace;color:#1a3a5c;min-width:140px}
+.jh8-cadran.jh8-marche{background:#52a4311a}
+.jh8-cadran.jh8-marche .jh8-t{color:#2f6e1a}
+.jh8-go{min-width:140px;min-height:40px;border-radius:9999px;border:0;background:#52a431;color:#fff;font-weight:700;font-size:14px;cursor:pointer;padding:0 16px}
+.jh8-go:hover{background:#468f29}
+.jh8-go.jh8-stop{background:#c0392b}
+.jh8-scroll{overflow-x:auto}
+.jh8-table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:4px}
+.jh8-table th{text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#4b5868;padding:6px 8px;border-bottom:1px solid #1a3a5c1f;white-space:nowrap}
+.jh8-table td{padding:6px 8px;border-bottom:1px solid #1a3a5c0d;vertical-align:middle}
+.jh8-table td.n,.jh8-table th.n{text-align:right;white-space:nowrap;font-family:"Roboto Mono",Consolas,monospace}
+.jh8-table .jh2-retirer{margin-top:0}
+.jh8-tr-tard td{color:#c0392b}
+.jh8-dateinp{font:500 12.5px "Roboto Mono",Consolas,monospace;border:1px dashed #94a3b8;border-radius:8px;padding:2px 6px;background:#ffffffb3;color:#1a3a5c}
+.jh8-tr-tard .jh8-dateinp{border-color:#c0392b;color:#c0392b;background:#fdecea}
+.jh2-case.jh8-on{background:#52a431;border-color:#52a431;color:#fff}
+.jh8-ajtache{flex-wrap:wrap}
+.jh8-ajtache .champ{flex:1;min-width:200px}
+.jh8-sous2{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin-top:10px}
+.jh8-barres{display:grid;gap:6px;margin-top:4px}
+.jh8-barre{display:grid;grid-template-columns:110px minmax(0,1fr) 70px;gap:8px;align-items:center;font-size:13px}
+.jh8-barre>span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.jh8-b{height:10px;border-radius:9999px;background:#1a3a5c14;overflow:hidden;display:block}
+.jh8-b i{display:block;height:100%;background:#1a3a5c;border-radius:9999px}
+.jh8-barre>span:last-child{text-align:right;font-family:"Roboto Mono",Consolas,monospace;font-size:12.5px}
+.jh8-entrees-t{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+.jh8-man{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;align-items:center;background:#1a3a5c0a;border-radius:12px;padding:10px}
+/* étiquettes : banque du projet */
+.jh8-opt-rang{display:flex;align-items:center}
+.jh8-opt-rang .jh2-etiq-option{flex:1}
+.jh8-opt-x{width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;color:#94a3b8;border-radius:9999px;opacity:0;flex:none}
+.jh8-opt-rang:hover .jh8-opt-x,.jh8-opt-x:focus-visible{opacity:1}
+.jh8-opt-x:hover{background:#fef2f2;color:#dc3545}
+.jh8-opt-x svg{width:12px;height:12px}
+@media(max-width:600px){.jh8-voile{padding:8px}.jh8-modal{padding:14px}.jh8-edhaut label{flex:1 1 100%!important}.jh8-ot{min-width:48px;height:48px}.jh8-barre{grid-template-columns:80px minmax(0,1fr) 60px}.jh8-table{font-size:12.5px}.jh8-logo.jh8-logo-g{height:64px;padding:6px}.jh8-logo.jh8-logo-g img{height:50px}.jh8-modif{font-size:0;gap:0;padding:8px}}
+@media(hover:none){.jh8-opt-x{opacity:1}}
