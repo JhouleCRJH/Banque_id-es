@@ -42,7 +42,7 @@ a2 = m.find('(0,L.jsx)(kn,{titre:"Photos et croquis"'); b2 = m.find('(0,L.jsx)(k
 assert 0 < a2 < b2 and b2 - a2 < 4000, (a2, b2)
 m = m[:a2] + '(0,L.jsx)(kn,{titre:"Points forts et faiblesses",info:"forces",compte:jh8CompteForces(e19),children:(0,L.jsx)(JhForces,{idee:e19,onMaj:t10})}),' + m[b2:]
 # 8. Horodateur avant les notes
-rep('(0,L.jsx)(kn,{titre:"Notes",', '(0,L.jsx)(kn,{titre:"Horodateur et bilan du temps",info:"horodateur",compte:jh8CompteHoro(e19),children:(0,L.jsx)(JhHorodateur,{idee:e19,onMaj:t10,doc:a10})}),(0,L.jsx)(kn,{titre:"Notes",')
+rep('(0,L.jsx)(kn,{titre:"Notes",', '(0,L.jsx)(kn,{titre:"Versions et journal des modifications",info:"suivi",compte:jh8CompteSuivi(e19),children:(0,L.jsx)(JhSuivi,{idee:e19,onMaj:t10})}),(0,L.jsx)(kn,{titre:"Horodateur et bilan du temps",info:"horodateur",compte:jh8CompteHoro(e19),children:(0,L.jsx)(JhHorodateur,{idee:e19,onMaj:t10,doc:a10})}),(0,L.jsx)(kn,{titre:"Notes",')
 # 9. outils de la fiche + échéancier
 rep("e19.dev&&(0,L.jsx)(xA,", '(0,L.jsx)(JhOutilsFiche,{idee:e19,doc:a10}),(0,L.jsx)(kn,{titre:"Échéancier",info:"echeancier",compte:jh8CompteEch(e19),children:(0,L.jsx)(JhEcheancier,{idee:e19,onMaj:t10})}),e19.dev&&(0,L.jsx)(xA,')
 # 10. Points à corriger : seulement la banque d'étiquettes du projet et l'échéance
