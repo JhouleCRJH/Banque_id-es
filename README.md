@@ -21,3 +21,10 @@ L'application s'installe sur l'écran d'accueil (iPhone : Safari › Partager �
 - `outils/patch_pwa.py` ajoute les balises du téléphone dans `index.html`. **Après un nouveau `outils/build.py` puis `outils/patch_v2.py`, relancer `python outils/patch_pwa.py`**, sinon l'icône disparaît de l'iPhone.
 - Pas de « service worker » : la page est toujours lue en ligne, donc jamais de vieille version gardée sur le téléphone.
 - Dans l'application installée sur l'iPhone, se connecter avec le **code** reçu par courriel (un clic sur le lien ouvrirait Safari, pas l'application).
+
+## Connexion par mot de passe (2026-11-26, cloud.js v7)
+Le filtre Proofpoint de la messagerie bloquait les courriels de connexion. La connexion habituelle se fait maintenant avec **courriel + mot de passe** (rempli par le trousseau iCloud et Face ID sur iPhone et iPad).
+- Première connexion ou mot de passe oublié : lien « Recevoir un code » → code par courriel → l'application propose ensuite de créer le mot de passe.
+- Changer son mot de passe : bouton 🔑 en bas à droite (section « Mon mot de passe » du panneau).
+- Les modèles de courriel Supabase (« Magic link or OTP » et « Confirm sign up ») envoient seulement un code, sans lien.
+- Après une modification de `cloud.js`, augmenter le numéro dans `cloud.js?v=` (index.html et outils/build.py) pour que les téléphones prennent la nouvelle version.

@@ -38,7 +38,7 @@
       "#jhc-voile .b{background:#fff;border-radius:16px;padding:32px;width:min(420px,92vw);box-shadow:0 20px 60px rgba(0,0,0,.35);color:#2d2d2d}" +
       "#jhc-voile h1{font-size:22px;font-weight:800;color:#1a3a5c;margin:0 0 6px}" +
       "#jhc-voile p{font-size:14px;margin:0 0 14px;line-height:1.45;color:#475569}" +
-      ".jhc-in{width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:10px 12px;font-size:15px;margin:0 0 12px;outline:none}" +
+      ".jhc-in{box-sizing:border-box;width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:10px 12px;font-size:15px;margin:0 0 12px;outline:none}" +
       ".jhc-in:focus{border-color:#52a431}" +
       ".jhc-btn{background:#52a431;color:#fff;border-radius:999px;padding:10px 18px;font-weight:700;font-size:14px;cursor:pointer;border:0}" +
       ".jhc-btn.sec{background:#e2e8f0;color:#1a3a5c}.jhc-btn:disabled{opacity:.5}" +
@@ -57,37 +57,108 @@
   }
 
   /* ---------- connexion ---------- */
+  /* v7 : connexion par courriel + mot de passe (rempli par le trousseau iCloud / Face ID).
+     Le code par courriel reste pour la première connexion et le mot de passe oublié :
+     après un code, l'application propose de créer le mot de passe. */
+  var viaCode = false;   // vrai quand la session vient d'un code reçu par courriel
+
+  function courrielValide(c) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(c); }
+
+  /* Formulaire « nouveau mot de passe » : sert après un code et dans le panneau. */
+  function formMotDePasse(courriel, libelle, quandFini) {
+    var form = el("form");
+    var inpU = el("input", { "class": "jhc-in", type: "email", name: "email", autocomplete: "username", readonly: "readonly", style: "background:#f1f5f9;color:#64748b" });
+    inpU.value = courriel;
+    var inpM = el("input", { "class": "jhc-in", type: "password", name: "new-password", placeholder: "Nouveau mot de passe (8 caractères ou plus)", autocomplete: "new-password", minlength: "8" });
+    var err = el("div", { "class": "jhc-err" });
+    var btn = el("button", { "class": "jhc-btn", type: "submit", texte: libelle });
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (inpM.value.length < 8) { err.style.color = ""; err.textContent = "8 caractères ou plus."; return; }
+      btn.disabled = true; err.style.color = ""; err.textContent = "";
+      sb.auth.updateUser({ password: inpM.value }).then(function (r) {
+        btn.disabled = false;
+        if (r.error) { err.textContent = traduireErreur(r.error); return; }
+        inpM.value = "";
+        err.style.color = "#2f6b1a";
+        err.textContent = "Mot de passe enregistré.";
+        if (quandFini) quandFini();
+      });
+    });
+    [inpU, inpM, err, btn].forEach(function (c) { form.appendChild(c); });
+    return form;
+  }
+
   function ecranConnexion() {
     var voile = el("div", { id: "jhc-voile" });
     var boite = el("div", { "class": "b" });
     voile.appendChild(boite);
     document.body.appendChild(voile);
     var courriel = "";
-
-    function etape1() {
+    function monter(enfants) {
       boite.innerHTML = "";
-      var inp = el("input", { "class": "jhc-in", type: "email", placeholder: "votre.courriel@exemple.com", autocomplete: "email" });
+      enfants.forEach(function (c) { if (c) boite.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+    }
+
+    /* Connexion habituelle : courriel + mot de passe. */
+    function etapeMotDePasse() {
+      var form = el("form");
+      var inpC = el("input", { "class": "jhc-in", type: "email", name: "email", placeholder: "votre.courriel@exemple.com", autocomplete: "username", autocapitalize: "none", spellcheck: "false" });
+      var inpM = el("input", { "class": "jhc-in", type: "password", name: "password", placeholder: "Mot de passe", autocomplete: "current-password" });
+      if (courriel) inpC.value = courriel;
+      var err = el("div", { "class": "jhc-err" });
+      var btn = el("button", { "class": "jhc-btn", type: "submit", texte: "Me connecter" });
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        courriel = inpC.value.trim().toLowerCase();
+        if (!courrielValide(courriel)) { err.textContent = "Entrez une adresse courriel valide."; return; }
+        if (!inpM.value) { err.textContent = "Entrez votre mot de passe."; return; }
+        btn.disabled = true; err.textContent = "";
+        sb.auth.signInWithPassword({ email: courriel, password: inpM.value }).then(function (r) {
+          btn.disabled = false;
+          if (r.error) err.textContent = traduireErreur(r.error);
+        });
+      });
+      [inpC, inpM, err, btn].forEach(function (c) { form.appendChild(c); });
+      monter([
+        el("h1", { texte: "Banque d'idées" }),
+        el("p", { texte: "Entrez votre courriel et votre mot de passe. Sur iPhone et iPad, le trousseau iCloud les remplit avec Face ID." }),
+        form,
+        el("p", { style: "margin:16px 0 0;font-size:13px" }, [
+          el("a", { href: "#", style: "color:#1a3a5c;font-weight:600", texte: "Première connexion ou mot de passe oublié ? Recevoir un code",
+                    onclick: function (e) { e.preventDefault(); courriel = inpC.value.trim().toLowerCase(); etapeCodeCourriel(); } })
+        ])
+      ]);
+      setTimeout(function () { (courriel ? inpM : inpC).focus(); }, 50);
+    }
+
+    /* Première connexion ou mot de passe oublié : code par courriel. */
+    function etapeCodeCourriel() {
+      var inp = el("input", { "class": "jhc-in", type: "email", placeholder: "votre.courriel@exemple.com", autocomplete: "email", autocapitalize: "none", spellcheck: "false" });
+      if (courriel) inp.value = courriel;
       var err = el("div", { "class": "jhc-err" });
       var btn = el("button", { "class": "jhc-btn", texte: "Recevoir mon code" });
       function envoyer() {
         courriel = inp.value.trim().toLowerCase();
-        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(courriel)) { err.textContent = "Entrez une adresse courriel valide."; return; }
+        if (!courrielValide(courriel)) { err.textContent = "Entrez une adresse courriel valide."; return; }
         btn.disabled = true; err.textContent = "";
         sb.auth.signInWithOtp({ email: courriel, options: { shouldCreateUser: true, emailRedirectTo: APP_URL } }).then(function (r) {
           btn.disabled = false;
           if (r.error) { err.textContent = traduireErreur(r.error); return; }
-          etape2();
+          etapeCode();
         });
       }
       btn.addEventListener("click", envoyer);
       inp.addEventListener("keydown", function (e) { if (e.key === "Enter") envoyer(); });
-      [el("h1", { texte: "Banque d'idées" }),
-       el("p", { texte: "Entrez votre courriel. Vous recevrez un lien de connexion (ou un code). Aucun mot de passe à retenir." }),
-       inp, err, btn].forEach(function (c) { boite.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+      monter([
+        el("h1", { texte: "Recevoir un code" }),
+        el("p", { texte: "Entrez votre courriel : vous recevrez un code à entrer ici. Vous créerez ensuite votre mot de passe, et vous n'aurez plus besoin de code." }),
+        inp, err, btn, " ",
+        el("button", { "class": "jhc-btn sec", texte: "← Retour", onclick: etapeMotDePasse })
+      ]);
       setTimeout(function () { inp.focus(); }, 50);
     }
-    function etape2() {
-      boite.innerHTML = "";
+    function etapeCode() {
       var inp = el("input", { "class": "jhc-in", inputmode: "numeric", placeholder: "Code reçu par courriel", autocomplete: "one-time-code" });
       var err = el("div", { "class": "jhc-err" });
       var btn = el("button", { "class": "jhc-btn", texte: "Me connecter" });
@@ -95,28 +166,50 @@
         var code = inp.value.replace(/\s/g, "");
         if (!code) { err.textContent = "Entrez le code reçu."; return; }
         btn.disabled = true;
+        viaCode = true;
         sb.auth.verifyOtp({ email: courriel, token: code, type: "email" }).then(function (r) {
           btn.disabled = false;
-          if (r.error) err.textContent = traduireErreur(r.error);
+          if (r.error) { viaCode = false; err.textContent = traduireErreur(r.error); }
         });
       }
       btn.addEventListener("click", verifier);
       inp.addEventListener("keydown", function (e) { if (e.key === "Enter") verifier(); });
-      [el("h1", { texte: "Vérifiez vos courriels" }),
-       el("p", { texte: "Un courriel a été envoyé à " + courriel + ". Cliquez sur le lien qu'il contient, ou entrez ici le code s'il y en a un." }),
-       inp, err, btn, " ",
-       el("button", { "class": "jhc-btn sec", texte: "Changer d'adresse", onclick: etape1 })].forEach(function (c) { boite.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+      monter([
+        el("h1", { texte: "Vérifiez vos courriels" }),
+        el("p", { texte: "Un code a été envoyé à " + courriel + ". Entrez-le ici. S'il n'arrive pas, regardez dans vos courriels indésirables ou la quarantaine de votre filtre." }),
+        inp, err, btn, " ",
+        el("button", { "class": "jhc-btn sec", texte: "Changer d'adresse", onclick: etapeCodeCourriel })
+      ]);
       setTimeout(function () { inp.focus(); }, 50);
     }
-    etape1();
+    etapeMotDePasse();
     return voile;
   }
+
+  /* Après une connexion par code : proposer de créer (ou changer) le mot de passe. */
+  function ecranCreerMotDePasse(voile, session, suite) {
+    var boite = voile.querySelector(".b");
+    boite.innerHTML = "";
+    var fini = false;
+    function continuer() { if (fini) return; fini = true; suite(); }
+    var form = formMotDePasse((session.user.email || "").toLowerCase(), "Enregistrer et ouvrir mes idées", function () { setTimeout(continuer, 600); });
+    [el("h1", { texte: "Créez votre mot de passe" }),
+     el("p", { texte: "Vous n'aurez plus besoin de code par courriel. Sur iPhone et iPad, acceptez le mot de passe suggéré : le trousseau iCloud le retient et Face ID le remplira." }),
+     form, " ",
+     el("button", { "class": "jhc-btn sec", style: "margin-top:8px", texte: "Plus tard", onclick: continuer })
+    ].forEach(function (c) { boite.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+  }
+
   function traduireErreur(e) {
-    var m = (e && (e.code || e.message)) || "";
-    if (/not_authorized|not authorized/i.test(m)) return "Les courriels de connexion ne sont pas encore activés pour cette adresse. Avisez la personne qui vous a invité.";
-    if (/rate|429/i.test(m)) return "Trop de demandes. Attendez quelques minutes et réessayez.";
-    if (/expired|invalid/i.test(m)) return "Ce code est invalide ou expiré. Demandez-en un nouveau.";
-    return "Erreur : " + (e.message || m);
+    var t = ((e && e.code) || "") + " " + ((e && e.message) || "");
+    if (/invalid_credentials|invalid login/i.test(t)) return "Courriel ou mot de passe incorrect. Pas encore de mot de passe ? Touchez « Recevoir un code » plus bas.";
+    if (/email_not_confirmed|not confirmed/i.test(t)) return "Première connexion : touchez « Recevoir un code » plus bas pour activer votre accès.";
+    if (/same_password|different from the old/i.test(t)) return "C'est déjà votre mot de passe.";
+    if (/weak_password|should be at least/i.test(t)) return "Mot de passe trop faible : 8 caractères ou plus.";
+    if (/not_authorized|not authorized/i.test(t)) return "Les courriels de connexion ne sont pas encore activés pour cette adresse. Avisez la personne qui vous a invité.";
+    if (/rate|429/i.test(t)) return "Trop de demandes. Attendez quelques minutes et réessayez.";
+    if (/expired|invalid/i.test(t)) return "Ce code est invalide ou expiré. Demandez-en un nouveau.";
+    return "Erreur : " + ((e && (e.message || e.code)) || e);
   }
 
   /* ---------- chargement ---------- */
@@ -358,6 +451,7 @@
     etatEl = el("span", { id: "jhc-etat", texte: "☁ À jour", title: "Vos changements sont enregistrés en ligne automatiquement" });
     var b = el("div", { id: "jhc-barre" }, [
       etatEl,
+      el("button", { "class": "jhc-btn sec", texte: "🔑", title: "Mon mot de passe", "aria-label": "Mon mot de passe", onclick: ouvrirMotDePasse }),
       el("button", { "class": "jhc-btn", texte: "👥 Partager", onclick: basculerPanneau })
     ]);
     document.body.appendChild(b);
@@ -369,6 +463,16 @@
     panneau = el("div", { id: "jhc-panneau" });
     document.body.appendChild(panneau);
     rafraichirPanneau();
+  }
+  function ouvrirMotDePasse() {
+    selection = null;
+    if (!panneauOuvert) basculerPanneau(); else rafraichirPanneau();
+    var n = 0;
+    (function viser() {
+      var h = document.getElementById("jhc-mdp");
+      if (h) h.scrollIntoView({ block: "start", behavior: "smooth" });
+      else if (n++ < 20) setTimeout(viser, 150);
+    })();
   }
   function ideesActuelles() {
     // état connu du serveur (à jour après chaque enregistrement)
@@ -431,6 +535,9 @@
         ]));
       });
     }
+    panneau.appendChild(el("h3", { id: "jhc-mdp", texte: "Mon mot de passe" }));
+    panneau.appendChild(el("p", { style: "font-size:13px;margin:0 0 8px", texte: "Créez ou changez votre mot de passe. Sur iPhone et iPad, acceptez le mot de passe suggéré : Face ID le remplira ensuite." }));
+    panneau.appendChild(formMotDePasse(monCourriel, "Enregistrer mon mot de passe"));
     panneau.appendChild(el("div", { style: "margin-top:14px;text-align:right" }, [
       el("button", { "class": "jhc-btn sec", texte: "Me déconnecter", onclick: function () { sb.auth.signOut().then(function () { location.reload(); }); } })
     ]));
@@ -473,7 +580,7 @@
         if (r.error) { err.textContent = "Erreur : " + r.error.message; return; }
         var sujet = "Invitation : idée « " + (idee.titre || "") + " »";
         var corps = "Bonjour,\n\nJe t'invite à travailler avec moi sur l'idée « " + (idee.titre || "") + " » dans ma banque d'idées.\n\n" +
-          "1. Ouvre ce lien : " + APP_URL + "\n2. Entre ton adresse courriel (" + c + ") et confirme avec le lien ou le code reçu.\n\n" +
+          "1. Ouvre ce lien : " + APP_URL + "\n2. Touche « Première connexion ou mot de passe oublié ? Recevoir un code » et entre ton adresse courriel (" + c + ").\n3. Entre le code reçu par courriel, puis crée ton mot de passe. Ensuite, tu te connectes avec ton courriel et ton mot de passe, sans code.\n\n" +
           "Tu verras seulement les idées que je partage avec toi.\n\nMerci!";
         location.href = "mailto:" + encodeURIComponent(c) + "?subject=" + encodeURIComponent(sujet) + "&body=" + encodeURIComponent(corps);
         etat("☁ Partagé avec " + c);
@@ -570,6 +677,16 @@
       if (location.hash && /access_token|error/.test(location.hash)) history.replaceState(null, "", APP_URL);
       var b = voile.querySelector(".b");
       b.innerHTML = "";
+      if (viaCode) {
+        viaCode = false;
+        ecranCreerMotDePasse(voile, session, function () {
+          b.innerHTML = "";
+          b.appendChild(el("h1", { texte: "Chargement…" }));
+          b.appendChild(el("p", { texte: "Ouverture de vos idées." }));
+          apresConnexion(session, voile);
+        });
+        return;
+      }
       b.appendChild(el("h1", { texte: "Chargement…" }));
       b.appendChild(el("p", { texte: "Ouverture de vos idées." }));
       apresConnexion(session, voile);
