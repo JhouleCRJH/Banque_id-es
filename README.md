@@ -13,3 +13,11 @@ Les idées sont protégées dans Supabase par des règles d'accès : le proprié
 points forts et faiblesses, horodateur, banque d'étiquettes par projet, bandeau photo/couleur/logo, échéance des points).
 Après un nouveau `outils/build.py`, relancer `python3 outils/patch_v2.py`. Les données existantes ne changent pas de forme :
 les nouveaux champs s'ajoutent seulement.
+
+## Application sur le téléphone (2026-11-26)
+L'application s'installe sur l'écran d'accueil (iPhone : Safari › Partager › « Sur l'écran d'accueil » ; Android : Chrome › ⋮ › « Installer l'application ») et s'ouvre en plein écran.
+- `manifest.webmanifest` : nom, couleurs, icônes.
+- `icones/` : icônes faites par `outils/icones.py` (ampoule marine et verte ; relancer le script pour les refaire).
+- `outils/patch_pwa.py` ajoute les balises du téléphone dans `index.html`. **Après un nouveau `outils/build.py` puis `outils/patch_v2.py`, relancer `python outils/patch_pwa.py`**, sinon l'icône disparaît de l'iPhone.
+- Pas de « service worker » : la page est toujours lue en ligne, donc jamais de vieille version gardée sur le téléphone.
+- Dans l'application installée sur l'iPhone, se connecter avec le **code** reçu par courriel (un clic sur le lien ouvrirait Safari, pas l'application).
