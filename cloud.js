@@ -178,13 +178,30 @@
   }
 
   /* ---------- enregistrement ---------- */
+  var aEnvoyer = null, reessai = null, delaiReessai = 5000, enCours = 0;
   function sauver(doc) {
     var copie = doc.idees.slice();
-    file = file.then(function () { return envoyer(copie); }).catch(function (e) {
-      console.error(e); etat("⚠ Non enregistré : " + (e.message || e), true);
-    });
+    aEnvoyer = copie; enCours++;
+    if (reessai) { clearTimeout(reessai); reessai = null; }
+    file = file.then(function () { return envoyer(copie); }).then(function () {
+      delaiReessai = 5000;
+      if (aEnvoyer === copie) aEnvoyer = null;
+    }).catch(function (e) {
+      console.error(e);
+      var s = Math.round(delaiReessai / 1000);
+      etat("⚠ Pas encore enregistré, nouvel essai dans " + s + " s (garde cet onglet ouvert)", true);
+      // nouvel essai automatique : rien n'est perdu tant que l'onglet reste ouvert
+      if (!reessai) reessai = setTimeout(function () {
+        reessai = null;
+        if (aEnvoyer) sauver({ idees: aEnvoyer });
+      }, delaiReessai);
+      delaiReessai = Math.min(delaiReessai * 2, 60000);
+    }).then(function () { enCours--; });
     return Promise.resolve("indexeddb");
   }
+  window.addEventListener("beforeunload", function (e) {
+    if (aEnvoyer || enCours > 0) { e.preventDefault(); e.returnValue = "Des changements ne sont pas encore enregistrés."; return e.returnValue; }
+  });
   function envoyer(idees) {
     var vus = {}, taches = [];
     idees.forEach(function (i) {
