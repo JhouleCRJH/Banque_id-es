@@ -29,8 +29,11 @@ Le filtre Proofpoint de la messagerie bloquait les courriels de connexion. La co
 - Les modèles de courriel Supabase (« Magic link or OTP » et « Confirm sign up ») envoient seulement un code, sans lien.
 - Après une modification de `cloud.js`, augmenter le numéro dans `cloud.js?v=` (index.html et outils/build.py) pour que les téléphones prennent la nouvelle version.
 
-## Avancement de la programmation pliable (2026-11-28)
-`outils/patch_avancement.py` rend la section « Avancement de la programmation » pliable comme les autres :
-un clic sur son en-tête plie ou déplie toute la section, et le sous-titre « Activités » plie ou déplie seulement
-le graphique d'activité, les versions et le journal des modifications. « Tout plier » et « Tout déplier » agissent aussi sur les deux.
-Ordre après une régénération : `build.py`, `patch_v2.py`, `patch_avancement.py`, puis `patch_pwa.py`.
+## Sections pliables : Avancement, Impact et effort, Cadrage (2026-11-28)
+`outils/patch_plier.py` rend pliables les sections de la fiche qui ne l'étaient pas encore :
+- « Avancement de la programmation » : un clic sur l'en-tête plie ou déplie toute la section, et le sous-titre « Activités »
+  plie ou déplie seulement le graphique d'activité, les versions et le journal des modifications.
+- « Impact et effort » (titre ajouté) : pliée, elle garde la pastille de priorité et « Impact x/5 · Effort y/5 ».
+- « Cadrage de l'idée » : pliée, elle garde son pourcentage.
+« Tout plier » et « Tout déplier » agissent sur toutes ces sections. Le script saute ce qui est déjà appliqué.
+Ordre après une régénération : `build.py`, `patch_v2.py`, `patch_plier.py`, puis `patch_pwa.py`.
