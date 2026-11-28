@@ -36,4 +36,6 @@ Le filtre Proofpoint de la messagerie bloquait les courriels de connexion. La co
 - « Impact et effort » (titre ajouté) : pliée, elle garde la pastille de priorité et « Impact x/5 · Effort y/5 ».
 - « Cadrage de l'idée » : pliée, elle garde son pourcentage.
 « Tout plier » et « Tout déplier » agissent sur toutes ces sections. Le script saute ce qui est déjà appliqué.
+- Thème sombre : le pourcentage d'avancement (fiche et Atelier) prend une couleur claire selon l'étape.
+- Téléphone : les 4 boutons d'étape de l'avancement passent sur 2 rangées.
 Ordre après une régénération : `build.py`, `patch_v2.py`, `patch_plier.py`, puis `patch_pwa.py`.

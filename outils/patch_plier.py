@@ -6,6 +6,8 @@ JH v9 (2026-11-28) : « Avancement de la programmation »
 JH v10 (2026-11-28) : « Impact et effort » et « Cadrage de l'idée »
 - Un clic sur l'en-tête plie ou déplie la section. Pliée, « Impact et effort » garde un résumé
   (pastille de priorité, Impact x/5 · Effort y/5) et « Cadrage de l'idée » garde son pourcentage.
+JH v11 (2026-11-28) : en thème sombre, le pourcentage d'avancement (fiche et Atelier) prend une couleur claire;
+  sur téléphone, les boutons d'étape de l'avancement passent sur 2 rangées.
 Les boutons « Tout plier » et « Tout déplier » de la fiche agissent sur toutes ces sections.
 Chaque étape déjà présente dans le fichier est sautée : sans danger à relancer.
 Ordre après une régénération : build.py, patch_v2.py, patch_plier.py, puis patch_pwa.py.
@@ -84,6 +86,27 @@ if "JH v10" not in m:
         '(0,L.jsxs)(JhBlocPli,{cle:"cadrage",classe:"rounded-2xl border border-[#52A431]/25 bg-gradient-to-br from-white/85 to-[#52A431]/[0.06] p-4 sm:p-5",titre:["Cadrage de l\'idée",(0,L.jsx)(JhInfo,{cle:"cadrage"})],droite:(0,L.jsxs)("span",{className:"font-mono text-[20px] font-medium text-jh-vertfonce",children:[m10," %"]}),children:[')
     styles += '<style id="jh10-style">\n' + CSS10 + "</style>\n"
     fait.append("v10 Impact et effort, Cadrage de l'idée")
+
+# ---------- JH v11 : pourcentage d'avancement lisible en thème sombre ----------
+# La couleur de l'étape (bleu marine pour « En développement ») disparaissait sur le fond foncé.
+CSS11 = """/* JH v11 : pourcentage d'avancement lisible en thème sombre */
+html[data-jh-theme=sombre] .jh11-pct[data-etape=prototype]{color:#8cbbe6!important}
+html[data-jh-theme=sombre] .jh11-pct[data-etape=developpement]{color:#a9cdf0!important}
+html[data-jh-theme=sombre] .jh11-pct[data-etape=essais]{color:#f2b84b!important}
+html[data-jh-theme=sombre] .jh11-pct[data-etape=en-service]{color:#7fd35a!important}
+/* sur téléphone, les 4 boutons d'étape passent sur 2 rangées : « En développement » ne déborde plus */
+@media (max-width:520px){.jh9-avancement [role=group][aria-label="Étape"]{display:grid;grid-template-columns:1fr 1fr}}
+"""
+
+if 'id="jh11-style"' not in s:
+    # fiche de l'idée
+    rep('(0,L.jsxs)("span",{className:"font-display text-[22px] font-extrabold",style:{color:i10.couleur},children:[o10," %"]})',
+        '(0,L.jsxs)("span",{className:"jh11-pct font-display text-[22px] font-extrabold","data-etape":i10.k,style:{color:i10.couleur},children:[o10," %"]})')
+    # cartes de l'Atelier
+    rep('(0,L.jsxs)("span",{className:"font-display text-[22px] font-extrabold leading-none",style:{color:i11.couleur},children:[o11," %"]})',
+        '(0,L.jsxs)("span",{className:"jh11-pct font-display text-[22px] font-extrabold leading-none","data-etape":i11.k,style:{color:i11.couleur},children:[o11," %"]})')
+    styles += '<style id="jh11-style">\n' + CSS11 + "</style>\n"
+    fait.append("v11 pourcentage lisible en thème sombre, étapes sur 2 rangées au téléphone")
 
 if not fait:
     sys.exit("Déjà appliqué.")
